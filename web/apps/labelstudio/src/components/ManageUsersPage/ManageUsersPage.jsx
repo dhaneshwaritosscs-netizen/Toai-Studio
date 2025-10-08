@@ -40,6 +40,16 @@ export const ManageUsersPage = ({ onClose }) => {
       return "All Users";
     }
   });
+  const [roleFilter, setRoleFilter] = useState(() => {
+    // Load role filter from localStorage on component mount
+    try {
+      const saved = localStorage.getItem('roleFilter');
+      return saved || "All Roles";
+    } catch (error) {
+      console.error('Error loading role filter from localStorage:', error);
+      return "All Roles";
+    }
+  });
   const [userRolesState, setUserRolesState] = useState({});
   const [rolesLoading, setRolesLoading] = useState(false);
   const [userTargets, setUserTargets] = useState(() => {
@@ -388,6 +398,7 @@ export const ManageUsersPage = ({ onClose }) => {
     for (const { user: userData } of usersList) {
       try {
         // Fetch user roles using the same API as AssignRole page
+
         const rolesResponse = await fetch(`http://localhost:8010/api/simple-user-roles/?email=${encodeURIComponent(userData.email)}`, {
           method: 'GET',
           headers: {
@@ -512,6 +523,14 @@ export const ManageUsersPage = ({ onClose }) => {
     }
   }, [userFilter]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem('roleFilter', roleFilter);
+    } catch (error) {
+      console.error('Error saving role filter to localStorage:', error);
+    }
+  }, [roleFilter]);
+
   // Update current user's activity when page loads
   useEffect(() => {
     if (currentUser) {
@@ -610,7 +629,7 @@ export const ManageUsersPage = ({ onClose }) => {
   }, [currentUser]);
 
   // Users are now filtered on the server side, so we use them directly
-  // Only apply level filter on client side since it's stored in localStorage
+  // Only apply level and role filters on client side since they're stored in localStorage
   const filteredUsers = users.filter(({ user }) => {
     // Level filter - based on user assigned level
     let matchesLevelFilter = true;
@@ -619,7 +638,14 @@ export const ManageUsersPage = ({ onClose }) => {
       matchesLevelFilter = userLevel === levelFilter;
     }
     
-    return matchesLevelFilter;
+    // Role filter - based on user role
+    let matchesRoleFilter = true;
+    if (roleFilter !== "All Roles") {
+      const userRole = userRolesState[user.id]?.[0]?.display_name || "User";
+      matchesRoleFilter = userRole === roleFilter;
+    }
+    
+    return matchesLevelFilter && matchesRoleFilter;
   });
 
   const handleSelectUser = (userId) => {
@@ -1545,6 +1571,38 @@ export const ManageUsersPage = ({ onClose }) => {
                 <option value="All Users">All Users</option>
                 <option value="Active Users">Active Users</option>
                 <option value="Inactive Users">Inactive Users</option>
+              </select>
+            </div>
+
+            {/* Role Filter */}
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            }}>
+              <label style={{
+                fontSize: "12px",
+                fontWeight: "500",
+                color: "#374151",
+              }}>
+                Role
+              </label>
+              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                style={{
+                  padding: "8px 12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  backgroundColor: "white",
+                  minWidth: "120px",
+                }}
+              >
+                <option value="All Roles">All Roles</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Client">Client</option>
+                <option value="User">User</option>
               </select>
             </div>
 

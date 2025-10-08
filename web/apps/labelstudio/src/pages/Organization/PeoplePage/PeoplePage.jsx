@@ -7,6 +7,8 @@ import { modal } from "../../../components/Modal/Modal";
 import { Space } from "../../../components/Space/Space";
 import { useAPI } from "../../../providers/ApiProvider";
 import { useConfig } from "../../../providers/ConfigProvider";
+import { useCurrentUser } from "../../../providers/CurrentUser";
+import { useUserRoles } from "../../../hooks/useUserRoles";
 import { Block, Elem } from "../../../utils/bem";
 import { FF_AUTH_TOKENS, FF_LSDV_E_297, isFF } from "../../../utils/feature-flags";
 import "./PeopleInvitation.scss";
@@ -55,10 +57,20 @@ export const PeoplePage = () => {
   const apiSettingsModal = useRef();
   const config = useConfig();
   const toast = useToast();
+  const { user } = useCurrentUser();
+  const { hasRole } = useUserRoles();
   const [selectedUser, setSelectedUser] = useState(null);
   const [invitationOpen, setInvitationOpen] = useState(false);
 
   const [link, setLink] = useState();
+
+  // Determine user role
+  const isAdmin = hasRole('admin') || user?.email === 'dhaneshwari.tosscss@gmail.com';
+  const isClient = hasRole('client') || user?.email === 'dhaneshwari.ttosscss@gmail.com';
+  const isUser = hasRole('user');
+  
+  // Access control: Only admins and clients can access this page, not regular users
+  const shouldBlockAccess = isUser || (!isAdmin && !isClient);
 
   const selectUser = useCallback(
     (user) => {
@@ -93,6 +105,77 @@ export const PeoplePage = () => {
   const defaultSelected = useMemo(() => {
     return localStorage.getItem("selectedUser");
   }, []);
+
+  // Conditional rendering after all hooks are called
+  if (shouldBlockAccess) {
+    return (
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f8fafc",
+        padding: "20px"
+      }}>
+        <div style={{
+          backgroundColor: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "12px",
+          padding: "40px",
+          textAlign: "center",
+          maxWidth: "500px",
+          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+        }}>
+          <div style={{
+            fontSize: "48px",
+            marginBottom: "20px"
+          }}>
+            🚫
+          </div>
+          <h1 style={{
+            fontSize: "24px",
+            fontWeight: "600",
+            color: "#1f2937",
+            marginBottom: "12px"
+          }}>
+            Access Denied
+          </h1>
+          <p style={{
+            fontSize: "16px",
+            color: "#6b7280",
+            marginBottom: "24px",
+            lineHeight: "1.5"
+          }}>
+            You don't have permission to access the Organization page. 
+            Only administrators and clients can manage organization settings and people.
+          </p>
+          <button
+            onClick={() => window.location.href = '/projects'}
+            style={{
+              backgroundColor: "#3b82f6",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              padding: "12px 24px",
+              fontSize: "14px",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "background-color 0.2s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#2563eb";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#3b82f6";
+            }}
+          >
+            Go to Projects
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Block name="people">

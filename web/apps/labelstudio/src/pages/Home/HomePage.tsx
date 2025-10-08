@@ -60,6 +60,7 @@ export const HomePage: Page = () => {
   const { hasRole } = useUserRoles();
   const [creationDialogOpen, setCreationDialogOpen] = useState(false);
   const [invitationOpen, setInvitationOpen] = useState(false);
+  const [targetModalOpen, setTargetModalOpen] = useState(false);
   
   // Determine user role
   const isAdmin = hasRole('admin');
@@ -116,6 +117,25 @@ export const HomePage: Page = () => {
           break;
       }
     };
+  };
+
+  const handleTargetClick = () => {
+    if (isClient && user) {
+      setTargetModalOpen(true);
+    } else {
+      alert("Yet to Update");
+    }
+  };
+
+  // Get user target from localStorage
+  const getUserTarget = () => {
+    try {
+      const userTargets = JSON.parse(localStorage.getItem('userTargets') || '{}');
+      return userTargets[user?.id] || "No target set";
+    } catch (error) {
+      console.error('Error loading user target:', error);
+      return "No target set";
+    }
   };
 
   return (
@@ -258,24 +278,15 @@ export const HomePage: Page = () => {
                 {/* Quick Actions */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
-                  <div className="grid grid-cols-3 gap-3">
-                    <button className="bg-white hover:bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col items-center gap-2 transition-colors duration-200">
+                  <div className="flex justify-center">
+                    <button 
+                      onClick={handleTargetClick}
+                      className="bg-white hover:bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col items-center gap-2 transition-colors duration-200"
+                    >
                       <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
                         <span className="text-white text-sm">🎯</span>
                       </div>
                       <span className="text-purple-600 text-xs">Target</span>
-                    </button>
-                    <button className="bg-white hover:bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col items-center gap-2 transition-colors duration-200">
-                      <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm">👤</span>
-                      </div>
-                      <span className="text-green-600 text-xs">People</span>
-                    </button>
-                    <button className="bg-white hover:bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col items-center gap-2 transition-colors duration-200">
-                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm">💻</span>
-                      </div>
-                      <span className="text-purple-600 text-xs">Code</span>
                     </button>
                   </div>
                 </div>
@@ -291,7 +302,12 @@ export const HomePage: Page = () => {
                       <div className="flex-1">
                         <h4 className="text-gray-800 font-medium text-sm">Create New Update</h4>
                         <p className="text-gray-600 text-xs mt-1">Platform Building: New AI Models Available</p>
-                        <button className="text-blue-600 text-xs mt-2 hover:text-blue-700">Tutorial</button>
+                        <button 
+                          onClick={() => alert("Yet to Update")}
+                          className="text-blue-600 text-xs mt-2 hover:text-blue-700"
+                        >
+                          Tutorial
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -320,7 +336,12 @@ export const HomePage: Page = () => {
                         <div className="flex-1">
                           <h4 className="text-gray-800 font-medium text-sm">Object Project Filter</h4>
                           <p className="text-gray-600 text-xs mt-1">2 4 118 Tasks Complete!</p>
-                          <button className="text-blue-600 text-xs mt-2 hover:text-blue-700">Tutorial</button>
+                          <button 
+                            onClick={() => alert("Yet to Update")}
+                            className="text-blue-600 text-xs mt-2 hover:text-blue-700"
+                          >
+                            Tutorial
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -343,7 +364,11 @@ export const HomePage: Page = () => {
                       { icon: "🔌", label: "API Access", color: "text-gray-600" },
                       { icon: "🆘", label: "Support", color: "text-red-600" }
                     ].map((item, index) => (
-                      <button key={index} className="w-full flex items-center gap-3 p-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors duration-200">
+                      <button 
+                        key={index} 
+                        onClick={() => alert("Yet to Update")}
+                        className="w-full flex items-center gap-3 p-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors duration-200"
+                      >
                         <span className="text-lg">{item.icon}</span>
                         <span className={`text-sm ${item.color}`}>{item.label}</span>
                       </button>
@@ -354,7 +379,10 @@ export const HomePage: Page = () => {
                 {/* Support */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-bold text-gray-800 mb-4">Support</h3>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div 
+                    onClick={() => alert("Yet to Update")}
+                    className="bg-white border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                  >
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-gray-800 text-sm">11</span>
                       <span className="text-gray-800 text-sm">5</span>
@@ -377,7 +405,10 @@ export const HomePage: Page = () => {
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-bold text-gray-800 mb-2">Task Overview</h3>
                   <p className="text-gray-800 text-sm mb-4">7 Completed Tasks (3)</p>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                  <div 
+                    onClick={() => alert("Yet to Update")}
+                    className="bg-white border border-gray-200 rounded-lg p-4 mb-4 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                  >
                     <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                       <div className="bg-blue-500 h-2 rounded-full" style={{ width: '100%' }}></div>
                     </div>
@@ -399,7 +430,10 @@ export const HomePage: Page = () => {
                       <span className="text-gray-800 text-sm">30%</span>
                     </div>
                   </div>
-                  <button className="text-blue-600 text-sm hover:text-blue-700 flex items-center gap-1">
+                  <button 
+                    onClick={() => alert("Yet to Update")}
+                    className="text-blue-600 text-sm hover:text-blue-700 flex items-center gap-1"
+                  >
                     Relbirtastice <span>→</span>
                   </button>
                 </div>
@@ -411,6 +445,99 @@ export const HomePage: Page = () => {
 
       {creationDialogOpen && <CreateProject onClose={() => setCreationDialogOpen(false)} />}
       <InviteLink opened={invitationOpen} onClosed={() => setInvitationOpen(false)} />
+      
+      {/* Target Modal */}
+      {targetModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-800">Your Assigned Projects & Targets</h2>
+              <button
+                onClick={() => setTargetModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6">
+              {isSuccess && data && data.results.length > 0 ? (
+                <div className="space-y-4">
+                  {/* User Target Section */}
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-6">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">Your Personal Target</h3>
+                    <p className="text-blue-700 text-base">
+                      {getUserTarget()}
+                    </p>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-4">
+                    Here are your assigned projects with their targets:
+                  </p>
+                  {data.results.map((project) => (
+                    <div key={project.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                            {project.title}
+                          </h3>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-600">Project Target:</span>
+                              <span className="text-sm text-gray-800">
+                                {project.task_number || 0} tasks to complete
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-600">Progress:</span>
+                              <span className="text-sm text-gray-800">
+                                {project.finished_task_number || 0} of {project.task_number || 0} completed
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-600">Completion Rate:</span>
+                              <span className="text-sm text-gray-800">
+                                {(project.task_number && project.task_number > 0) ? Math.round(((project.finished_task_number || 0) / project.task_number) * 100) : 0}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="ml-4">
+                          <Link
+                            to={`/projects/${project.id}`}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors duration-200"
+                          >
+                            View Project
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* User Target Section - Even when no projects */}
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">Your Personal Target</h3>
+                    <p className="text-blue-700 text-base">
+                      {getUserTarget()}
+                    </p>
+                  </div>
+                  
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">🎯</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">No Projects Assigned</h3>
+                    <p className="text-gray-600">
+                      You don't have any projects assigned yet. Contact your administrator to get projects assigned.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };
@@ -481,11 +608,6 @@ function AdvancedProjectCard({
             }}>
             New Project
           </span>
-
-          {/* Additional Task Info */}
-          <p className="text-gray-500 text-xs mt-1">
-            {Math.floor(Math.random() * 5) + 1}/{Math.floor(Math.random() * 100) + 200} Tasks ({Math.floor(Math.random() * 20)}%)
-          </p>
         </div>
 
         {/* Circular Progress Indicator */}
