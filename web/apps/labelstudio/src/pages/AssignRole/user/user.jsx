@@ -520,19 +520,23 @@ export const AssignRole = () => {
         }
       `}</style>
       <div style={{
-        maxWidth: "800px",
-        margin: "0 auto",
+        width: "100%",
         padding: "40px 20px",
       }}>
         {/* Top Navigation Bar */}
         <TopNavigationBar />
         
-        {/* Header */}
+        {/* Centered Content Container */}
         <div style={{
-          textAlign: "center",
-          marginBottom: "40px",
-          position: "relative",
+          maxWidth: "800px",
+          margin: "0 auto",
         }}>
+          {/* Header */}
+          <div style={{
+            textAlign: "center",
+            marginBottom: "40px",
+            position: "relative",
+          }}>
           <div style={{
             position: "absolute",
             top: "0",
@@ -1317,6 +1321,7 @@ export const AssignRole = () => {
             )}
           </div>
         )}
+        </div>
       </div>
     </Block>
   );
